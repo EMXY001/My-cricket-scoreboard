@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101827">
+<title>Cricket Broadcast Scoreboard</title>
+<style>
+:root{--bg:#0b1220;--panel:#172338;--panel2:#22334d;--gold:#ffc857;--text:#f6f8fc;--muted:#a9b7ca;--red:#c83d4d;--green:#1e8e68}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{padding:16px 16px 12px;background:#101827;border-bottom:1px solid #34445c;position:sticky;top:0;z-index:3}
+.brand{font-size:12px;font-weight:900;letter-spacing:2px;color:var(--gold)}.sub{color:var(--muted);font-size:12px;margin-top:3px}
+main{max-width:760px;margin:auto;padding:14px;display:grid;gap:14px}
+.card{background:var(--panel);border:1px solid #293b55;border-radius:16px;padding:14px}
+.scoreboard{overflow:hidden;border-radius:14px;border:1px solid #40516a;background:#111b2b}
+.score-top{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:#23334c;border-bottom:3px solid var(--gold);gap:10px}
+.live{font-size:11px;letter-spacing:1px;font-weight:900;color:#fff;background:#bd2e40;border-radius:4px;padding:5px 7px}
+.matchinfo{text-align:right;font-size:11px;color:#d8e1ee;font-weight:700}
+.score-main{display:flex;justify-content:space-between;align-items:center;padding:16px 14px;gap:10px}
+.team{font-size:12px;font-weight:900;color:var(--gold);letter-spacing:1px}
+.total{font-size:clamp(28px,8vw,42px);font-weight:900;line-height:1.1;white-space:nowrap}
+.overs{font-size:13px;color:#cbd7e7;margin-top:5px}
+.right{text-align:right}.recent{display:flex;gap:6px;flex-wrap:wrap;padding:0 14px 13px}
+.ball{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#31435d;font-weight:800;font-size:12px}.ball.wicket{background:var(--red)}.ball.boundary{background:#187d63}
+.names{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 14px 14px}
+.namebox{background:#1b2a40;border-radius:8px;padding:8px 10px;min-width:0}.label{font-size:10px;color:var(--gold);font-weight:900;letter-spacing:1px}.nameval{font-size:13px;font-weight:750;overflow-wrap:anywhere;margin-top:2px}
+h2{font-size:14px;letter-spacing:1px;margin:0 0 12px;color:var(--gold)}
+button,input,select{font:inherit}button{border:0;border-radius:10px;background:var(--panel2);color:var(--text);padding:12px 8px;font-weight:800;min-height:44px;cursor:pointer}button:active{transform:scale(.98)}button.gold{background:var(--gold);color:#182235}button.red{background:var(--red)}button.green{background:var(--green)}button.secondary{background:#33435a}button:disabled{opacity:.45}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fieldgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{display:grid;gap:5px;font-size:12px;color:var(--muted);font-weight:700}
+input,select{width:100%;min-width:0;background:#0e1828;color:var(--text);border:1px solid #3a4d67;border-radius:9px;padding:11px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row>*{flex:1}
+.camera{position:relative;background:#05080e;border-radius:12px;overflow:hidden;aspect-ratio:16/9;display:grid;place-items:center}
+video{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;display:none}
+.camera-placeholder{padding:22px;text-align:center;color:var(--muted);font-size:13px}
+.mini-overlay{position:absolute;left:0;right:0;bottom:0;display:none;background:rgba(12,22,39,.94);border-top:2px solid var(--gold);padding:8px 10px;align-items:center;justify-content:space-between;gap:8px}
+.mini-team{font-weight:900;color:var(--gold);font-size:11px}.mini-score{font-size:19px;font-weight:900}.mini-meta{font-size:10px;color:#d5deeb;text-align:right}
+.note{font-size:12px;color:var(--muted);line-height:1.5;margin:10px 0 0}.status{font-size:12px;color:var(--muted);margin-top:8px;min-height:18px}.small{font-size:11px;color:var(--muted)}.foot{text-align:center;color:#7e8ea5;font-size:11px;padding:4px 12px 20px}
+@media(min-width:650px){main{grid-template-columns:1fr 1fr}.wide{grid-column:1/-1}}
+</style>
+</head>
+<body>
+<header><div class="brand">CRICKET BROADCAST</div><div class="sub">TEST MATCH SCOREBOARD · PHONE EDITION</div></header>
+<main>
+<section class="card wide">
+  <div class="scoreboard">
+    <div class="score-top"><span class="live">● LIVE SCORE</span><div class="matchinfo" id="matchInfo">TEST MATCH · DAY 1 · SESSION 1</div></div>
+    <div class="score-main">
+      <div><div class="team" id="batCode">IND</div><div class="total"><span id="runs">0</span>/<span id="wkts">0</span></div><div class="overs">OVERS <b id="overs">0.0</b> · CRR <b id="rr">0.00</b></div></div>
+      <div class="right"><div class="team">RECENT BALLS</div><div class="overs" id="recentText">No balls yet</div></div>
+    </div>
+    <div class="recent" id="recentBalls"><span class="small">Ball-by-ball updates appear here</span></div>
+    <div class="names">
+      <div class="namebox"><div class="label">BATTER 1</div><div class="nameval" id="batterAView">Batter 1</div></div>
+      <div class="namebox"><div class="label">BATTER 2</div><div class="nameval" id="batterBView">Batter 2</div></div>
+      <div class="namebox"><div class="label">BOWLER</div><div class="nameval" id="bowlerView">Bowler 1</div></div>
+      <div class="namebox"><div class="label">OPPOSITION</div><div class="nameval" id="oppView">AUS</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+<h2>SCORING CONTROLS</h2>
+<div class="grid">
+<button onclick="addRuns(0)">0</button><button onclick="addRuns(1)">1</button><button onclick="addRuns(2)">2</button><button onclick="addRuns(3)">3</button>
+<button class="green" onclick="addRuns(4)">4</button><button class="green" onclick="addRuns(6)">6</button><button class="red" onclick="wicket()">WICKET</button><button class="secondary" onclick="undo()">UNDO</button>
+</div>
+<div class="grid2" style="margin-top:8px"><button onclick="extra('Wd',1)">WIDE +1</button><button onclick="extra('Nb',1)">NO-BALL +1</button><button onclick="extra('B',1)">BYE +1</button><button onclick="extra('Lb',1)">LEG-BYE +1</button></div>
+<p class="note">Extras in this starter version add one team run and do not count as a legal ball. Use Undo to reverse the last scoring action.</p>
+</section>
+
+<section class="card">
+<h2>CAMERA & RECORDING</h2>
+<div class="camera">
+<video id="preview" playsinline muted></video>
+<div class="camera-placeholder" id="cameraPlaceholder">Camera preview will appear here.<br>Allow camera permission when prompted.</div>
+<div class="mini-overlay" id="miniOverlay"><div><div class="mini-team" id="miniTeam">IND</div><div class="mini-score" id="miniScore">0/0</div></div><div class="mini-meta" id="miniMeta">0.0 OVERS<br>TEST MATCH</div></div>
+</div>
+<div class="grid2" style="margin-top:10px"><button class="gold" id="cameraBtn" onclick="startCamera()">START CAMERA</button><button id="recordBtn" onclick="toggleRecord()" disabled>● RECORD</button></div>
+<div class="grid2" style="margin-top:8px"><button class="secondary" onclick="stopCamera()">STOP CAMERA</button><button class="secondary" onclick="downloadRecording()" id="downloadBtn" disabled>SAVE VIDEO</button></div>
+<div class="status" id="cameraStatus">For camera access, open this app in a browser context that permits camera access (usually HTTPS).</div>
+<p class="note">Browser support varies by phone. This prototype records the camera video; scoreboard is shown as a live preview overlay but is not yet burned into the saved recording.</p>
+</section>
+
+<section class="card">
+<h2>MATCH DETAILS</h2>
+<div class="fieldgrid">
+<label class="field">Batting team code<input id="batInput" value="IND" maxlength="8" oninput="updateSettings()"></label>
+<label class="field">Opposition code<input id="oppInput" value="AUS" maxlength="8" oninput="updateSettings()"></label>
+<label class="field">Batter 1<input id="batterA" value="Batter 1" oninput="updateSettings()"></label>
+<label class="field">Batter 2<input id="batterB" value="Batter 2" oninput="updateSettings()"></label>
+<label class="field">Bowler<input id="bowler" value="Bowler 1" oninput="updateSettings()"></label>
+<label class="field">Day<select id="day" onchange="updateSettings()"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
+<label class="field">Session<select id="session" onchange="updateSettings()"><option>1</option><option>2</option><option>3</option></select></label>
+<label class="field">Innings<select id="innings" onchange="updateSettings()"><option>1st innings</option><option>2nd innings</option><option>3rd innings</option><option>4th innings</option></select></label>
+</div>
+<div class="grid2" style="margin-top:10px"><button onclick="resetInnings()">NEW INNINGS</button><button class="secondary" onclick="resetMatch()">RESET MATCH</button></div>
+</section>
+</main>
+<div class="foot">Cricket Broadcast · Browser prototype · Match scores stay in this page while it remains open.</div>
+<script>
+let state={runs:0,wickets:0,balls:0,recent:[],history:[]};
+let stream=null,recorder=null,chunks=[],recordedBlob=null;
+function snapshot(){return JSON.parse(JSON.stringify({runs:state.runs,wickets:state.wickets,balls:state.balls,recent:state.recent}))}
+function saveHistory(){state.history.push(snapshot());if(state.history.length>80)state.history.shift()}
+function addRuns(n){saveHistory();state.runs+=n;state.balls++;state.recent.push({label:String(n),type:n===4||n===6?'boundary':''});render()}
+function wicket(){if(state.wickets>=10)return;saveHistory();state.wickets++;state.balls++;state.recent.push({label:'W',type:'wicket'});render()}
+function extra(label,n){saveHistory();state.runs+=n;state.recent.push({label,type:label==='Wd'||label==='Nb'?'extra':''});render()}
+function undo(){if(!state.history.length)return;let old=state.history.pop();Object.assign(state,old);render()}
+function render(){
+ const overs=`${Math.floor(state.balls/6)}.${state.balls%6}`;
+ document.getElementById('runs').textContent=state.runs;document.getElementById('wkts').textContent=state.wickets;document.getElementById('overs').textContent=overs;
+ document.getElementById('rr').textContent=state.balls?((state.runs/(state.balls/6))).toFixed(2):'0.00';
+ const last=state.recent.slice(-6);document.getElementById('recentText').textContent=last.length?last.map(x=>x.label).join(' · '):'No balls yet';
+ document.getElementById('recentBalls').innerHTML=last.length?last.map(x=>`<span class="ball ${x.type}">${esc(x.label)}</span>`).join(''):'<span class="small">Ball-by-ball updates appear here</span>';
+ document.getElementById('miniScore').textContent=`${state.runs}/${state.wickets}`;document.getElementById('miniMeta').innerHTML=`${overs} OVERS<br>DAY ${document.getElementById('day').value} · SESSION ${document.getElementById('session').value}`;
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function updateSettings(){
+ const bat=document.getElementById('batInput').value.trim().toUpperCase()||'TEAM';const opp=document.getElementById('oppInput').value.trim().toUpperCase()||'OPP';
+ document.getElementById('batCode').textContent=bat;document.getElementById('oppView').textContent=opp;document.getElementById('miniTeam').textContent=bat;
+ document.getElementById('batterAView').textContent=document.getElementById('batterA').value||'Batter 1';document.getElementById('batterBView').textContent=document.getElementById('batterB').value||'Batter 2';document.getElementById('bowlerView').textContent=document.getElementById('bowler').value||'Bowler';
+ document.getElementById('matchInfo').textContent=`TEST MATCH · DAY ${document.getElementById('day').value} · SESSION ${document.getElementById('session').value}`;
+ render()
+}
+function resetInnings(){if(!confirm('Start a new innings? Current innings score will reset.'))return;state={runs:0,wickets:0,balls:0,recent:[],history:[]};render()}
+function resetMatch(){if(!confirm('Reset the entire match score?'))return;state={runs:0,wickets:0,balls:0,recent:[],history:[]};document.getElementById('innings').selectedIndex=0;document.getElementById('day').value='1';document.getElementById('session').value='1';updateSettings()}
+async function startCamera(){
+ const status=document.getElementById('cameraStatus');
+ try{
+ if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)throw new Error('Camera API unavailable. Open this app from an HTTPS website in Chrome.');
+ stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:true});
+ const v=document.getElementById('preview');v.srcObject=stream;v.style.display='block';document.getElementById('cameraPlaceholder').style.display='none';document.getElementById('miniOverlay').style.display='flex';await v.play();
+ document.getElementById('cameraBtn').disabled=true;document.getElementById('recordBtn').disabled=false;status.textContent='Camera ready. Tap RECORD to begin.';
+ }catch(e){status.textContent=e.message||'Could not open camera. Check browser permission and try again.'}
+}
+function stopCamera(){
+ if(recorder&&recorder.state!=='inactive')recorder.stop();
+ if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}
+ const v=document.getElementById('preview');v.srcObject=null;v.style.display='none';document.getElementById('cameraPlaceholder').style.display='block';document.getElementById('miniOverlay').style.display='none';
+ document.getElementById('cameraBtn').disabled=false;document.getElementById('recordBtn').disabled=true;document.getElementById('cameraStatus').textContent='Camera stopped.';
+}
+function toggleRecord(){
+ if(!stream)return;
+ if(recorder&&recorder.state==='recording'){recorder.stop();document.getElementById('recordBtn').textContent='● RECORD';document.getElementById('cameraStatus').textContent='Recording stopped. Tap SAVE VIDEO.';return}
+ try{
+ chunks=[];const mime=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'].find(x=>MediaRecorder.isTypeSupported(x));
+ recorder=new MediaRecorder(stream,mime?{mimeType:mime}:undefined);
+ recorder.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
+ recorder.onstop=()=>{recordedBlob=new Blob(chunks,{type:recorder.mimeType||'video/webm'});document.getElementById('downloadBtn').disabled=false};
+ recorder.start(1000);document.getElementById('recordBtn').textContent='■ STOP RECORDING';document.getElementById('cameraStatus').textContent='Recording camera video…';
+ }catch(e){document.getElementById('cameraStatus').textContent='Recording is not supported in this browser: '+e.message}
+}
+function downloadRecording(){
+ if(!recordedBlob)return;const url=URL.createObjectURL(recordedBlob);const a=document.createElement('a');a.href=url;a.download='cricket-match.webm';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
+}
+render();updateSettings();
+</script>
+</body>
+</html>
